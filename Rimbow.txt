@@ -2048,8 +2048,9 @@ function Window:MakeTab(paste, Configs)
 	local PName = Configs[1] or Configs.Title or "Paragraph"
 	local PDesc = Configs[2] or Configs.Text or ""
 
-	local Frame = Create("Frame", Container, {
+	local Frame = Create("Frame", self.Cont, {
 		Size = UDim2.new(1, 0, 0, 20),
+		AutomaticSize = "Y",
 		BackgroundTransparency = 1
 	})
 
@@ -2091,12 +2092,8 @@ function Window:MakeTab(paste, Configs)
 	local Paragraph = {}
 	function Paragraph:Visible(...) Funcs:ToggleVisible(Frame, ...) end
 	function Paragraph:Destroy() Frame:Destroy() end
-	function Paragraph:SetTitle(Val)
-		TitleLabel.Text = GetStr(Val)
-	end
-	function Paragraph:SetDesc(Val)
-		DescLabel.Text = GetStr(Val)
-	end
+	function Paragraph:SetTitle(Val) TitleLabel.Text = GetStr(Val) end
+	function Paragraph:SetDesc(Val) DescLabel.Text = GetStr(Val) end
 	function Paragraph:Set(Val1, Val2)
 		if Val1 and Val2 then
 			TitleLabel.Text = GetStr(Val1)
