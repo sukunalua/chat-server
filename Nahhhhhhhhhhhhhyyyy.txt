@@ -1465,22 +1465,6 @@ MakeDrag(MainFrame)
 
 local MainCorner = Make("Corner", MainFrame)
 
-local MainStroke = Instance.new("UIStroke")
-MainStroke.Thickness = 2
-MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-MainStroke.Parent = MainFrame
-
-task.spawn(function()
-    while MainStroke and MainStroke.Parent do
-        local t = tick() * 0.5
-        local r = math.sin(t) * 0.5 + 0.5
-        local g = math.sin(t + 2) * 0.5 + 0.5
-        local b = math.sin(t + 4) * 0.5 + 0.5
-        MainStroke.Color = Color3.new(r, g, b)
-        task.wait()
-    end
-end)
-
 local Components = Create("Folder", MainFrame, {
     Name = "Components"
 })
@@ -1489,11 +1473,13 @@ local DropdownHolder = Create("Folder", ScreenGui, {
     Name = "Dropdown"
 })
 
-local TopBar = Create("Frame", Components, {
-    Size = UDim2.new(1, 0, 0, 28),
-    BackgroundTransparency = 1,
-    Name = "Top Bar"
-   })
+
+	local TopBar = Create("Frame", Components, {
+		Size = UDim2.new(1, 0, 0, 28),
+		BackgroundTransparency = 1,
+		Name = "Top Bar"
+	})
+	
 	local Title = InsertTheme(Create("TextLabel", TopBar, {
 		Position = UDim2.new(0, 15, 0.5),
 		AnchorPoint = Vector2.new(0, 0.5),
@@ -3012,4 +2998,3 @@ end
 
 
 return redzlib
-
