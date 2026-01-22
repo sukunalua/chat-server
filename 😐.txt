@@ -1992,18 +1992,17 @@ end)
 	end
 	
 	local ContainerList = {}
+local FirstTab = false
+
 function Window:MakeTab(paste, Configs)
 	if type(paste) == "table" then Configs = paste end
 	local TName = Configs[1] or Configs.Title or "Tab!"
 	local TIcon = Configs[2] or Configs.Icon or ""
-	
 	TIcon = redzlib:GetIcon(TIcon)
 	if not TIcon:find("rbxassetid://") or TIcon:gsub("rbxassetid://", ""):len() < 6 then
 		TIcon = false
 	end
-	
 	local TabSelect = Make("Button", MainScroll, {Size = UDim2.new(1, 0, 0, 24)})Make("Corner", TabSelect)
-	
 	local LabelTitle = InsertTheme(Create("TextLabel", TabSelect, {
 		Size = UDim2.new(1, TIcon and -25 or -15, 1),
 		Position = UDim2.fromOffset(TIcon and 25 or 15),
@@ -2016,7 +2015,6 @@ function Window:MakeTab(paste, Configs)
 		TextTransparency = (FirstTab and 0.3) or 0,
 		TextTruncate = "AtEnd"
 	}), "Text")
-	
 	local LabelIcon = InsertTheme(Create("ImageLabel", TabSelect, {
 		Position = UDim2.new(0, 8, 0.5),
 		Size = UDim2.new(0, 13, 0, 13),
@@ -2025,7 +2023,6 @@ function Window:MakeTab(paste, Configs)
 		BackgroundTransparency = 1,
 		ImageTransparency = (FirstTab and 0.3) or 0
 	}), "Text")
-	
 	local Selected = InsertTheme(Create("Frame", TabSelect, {
 		Size = FirstTab and UDim2.new(0, 4, 0, 4) or UDim2.new(0, 4, 0, 13),
 		Position = UDim2.new(0, 1, 0.5),
@@ -2033,12 +2030,10 @@ function Window:MakeTab(paste, Configs)
 		BackgroundColor3 = Theme["Color Theme"],
 		BackgroundTransparency = FirstTab and 1 or 0
 	}), "Theme")Make("Corner", Selected, UDim.new(0.5, 0))
-	
 	local TabStroke = Instance.new("UIStroke")
 	TabStroke.Thickness = 2
 	TabStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	TabStroke.Parent = TabSelect
-	
 	task.spawn(function()
 		while TabStroke and TabStroke.Parent do
 			local t = tick() * 0.5
@@ -2066,10 +2061,11 @@ function Window:MakeTab(paste, Configs)
 		Create("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10)}),
 		Create("UIListLayout", {Padding = UDim.new(0, 5)})
 	}), "ScrollBar")
-	
 	table.insert(ContainerList, Container)
-	if not FirstTab then Container.Parent = Containers end
-	
+	if not FirstTab then
+		Container.Parent = Containers
+		FirstTab = true
+	end
 	local function Tabs()
 		if Container.Parent then return end
 		for _,Frame in pairs(ContainerList) do
@@ -2087,12 +2083,9 @@ function Window:MakeTab(paste, Configs)
 		CreateTween({Selected, "BackgroundTransparency", 0, 0.35})
 	end
 	TabSelect.Activated:Connect(Tabs)
-	FirstTab = true
-	
 	local Tab = {}
 	table.insert(redzlib.Tabs, {TabInfo = {Name = TName, Icon = TIcon}, func = Tab, Cont = Container})
 	Tab.Cont = Container
-	
 	function Tab:Disable()
 		Container.Parent = nil
 		CreateTween({LabelTitle, "TextTransparency", 0.3, 0.35})
@@ -2106,6 +2099,36 @@ function Window:MakeTab(paste, Configs)
 		Funcs:ToggleParent(Container, Bool, Containers)
 	end
 	function Tab:Destroy() TabSelect:Destroy() Container:Destroy() end
+	function Tab:AddSection(Configs)
+		local SectionName = type(Configs) == "string" and Configs or Configs[1] or Configs.Name or Configs.Title or Configs.Section
+		local SectionFrame = Create("Frame", Container, {Size = UDim2.new(1, 0, 0, 20), BackgroundTransparency = 1, Name = "Option"})
+		local SectionLabel = InsertTheme(Create("TextLabel", SectionFrame, {
+			Font = Enum.Font.GothamBold,
+			Text = SectionName,
+			TextColor3 = Theme["Color Text"],
+			Size = UDim2.new(1, -25, 1, 0),
+			Position = UDim2.new(0, 5),
+			BackgroundTransparency = 1,
+			TextTruncate = "AtEnd",
+			TextSize = 14,
+			TextXAlignment = "Left"
+		}), "Text")
+		local Section = {}
+		table.insert(redzlib.Options, {type = "Section", Name = SectionName, func = Section})
+		function Section:Visible(Bool)
+			if Bool == nil then SectionFrame.Visible = not SectionFrame.Visible return end
+			SectionFrame.Visible = Bool
+		end
+		function Section:Destroy()
+			SectionFrame:Destroy()
+		end
+		function Section:Set(New)
+			if New then SectionLabel.Text = GetStr(New) end
+		end
+		return Section
+	end
+	return Tab
+end
 		function Tab:AddParagraph(Configs)
 			local PName = Configs[1] or Configs.Title or "Paragraph"
 			local PDesc = Configs[2] or Configs.Text or ""
