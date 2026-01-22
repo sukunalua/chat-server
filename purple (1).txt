@@ -1413,6 +1413,7 @@ function redzlib:MakeWindow(Configs)
 	local WTitle = Configs[1] or Configs.Name or Configs.Title or "redz Library V5"
 	local WMiniText = Configs[2] or Configs.SubTitle or "by : redz9999"
 	Settings.ScriptFile = Configs[3] or Configs.SaveFolder or false
+
 	local function LoadFile()
 		local File = Settings.ScriptFile
 		if type(File) ~= "string" then return end
@@ -1427,17 +1428,27 @@ function redzlib:MakeWindow(Configs)
 		end
 	end
 	LoadFile()
+
 	local UISizeX, UISizeY = unpack(redzlib.Save.UISize)
 	local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
 		Size = UDim2.fromOffset(UISizeX, UISizeY),
 		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
 		BackgroundTransparency = 1,
-		Name = "Hub"
+		Name = "Hub",
+		AutoButtonColor = false
 	}), "Main")
+
+	local StrokeFrame = Create("Frame", MainFrame.Parent, {
+		Size = MainFrame.Size,
+		Position = MainFrame.Position,
+		AnchorPoint = MainFrame.AnchorPoint,
+		BackgroundTransparency = 1
+	})
 	local FrameStroke = Instance.new("UIStroke")
 	FrameStroke.Thickness = 6
 	FrameStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	FrameStroke.Parent = MainFrame
+	FrameStroke.Parent = StrokeFrame
+
 	task.spawn(function()
 		while FrameStroke and FrameStroke.Parent do
 			local t = tick() * 0.5
@@ -1448,6 +1459,7 @@ function redzlib:MakeWindow(Configs)
 			task.wait()
 		end
 	end)
+
 	return MainFrame
 end
 local WindowBackground = Create("ImageLabel", MainFrame, {
