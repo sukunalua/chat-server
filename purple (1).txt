@@ -1088,29 +1088,6 @@ local ScreenGui = Create("ScreenGui", CoreGui, {
 		Name = "Scale"
 	})
 })
-
-local GuiFrame = Create("Frame", ScreenGui, {
-	Size = UDim2.new(1, 0, 1, 0),
-	Position = UDim2.new(0, 0, 0, 0),
-	BackgroundTransparency = 1,
-	ZIndex = 0
-})
-
-local GuiStroke = Instance.new("UIStroke")
-GuiStroke.Thickness = 6
-GuiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-GuiStroke.Parent = GuiFrame
-
-task.spawn(function()
-	while GuiStroke and GuiStroke.Parent do
-		local t = tick() * 0.5
-		local r = math.sin(t) * 0.5 + 0.5
-		local g = math.sin(t + 2) * 0.5 + 0.5
-		local b = math.sin(t + 4) * 0.5 + 0.5
-		GuiStroke.Color = Color3.new(r, g, b)
-		task.wait()
-	end
-end)
 local ClickSound = Instance.new("Sound", ScreenGui)
 ClickSound.SoundId = "rbxassetid://"
 ClickSound.Volume = 0.5
@@ -1435,33 +1412,44 @@ end
 function redzlib:MakeWindow(Configs)
 	local WTitle = Configs[1] or Configs.Name or Configs.Title or "redz Library V5"
 	local WMiniText = Configs[2] or Configs.SubTitle or "by : redz9999"
-	
 	Settings.ScriptFile = Configs[3] or Configs.SaveFolder or false
-	
 	local function LoadFile()
 		local File = Settings.ScriptFile
 		if type(File) ~= "string" then return end
 		if not readfile or not isfile then return end
 		local s, r = pcall(isfile, File)
-		
 		if s and r then
 			local s, _Flags = pcall(readfile, File)
-			
 			if s and type(_Flags) == "string" then
 				local s,r = pcall(function() return HttpService:JSONDecode(_Flags) end)
 				Flags = s and r or {}
 			end
 		end
-	end;LoadFile()
-	
+	end
+	LoadFile()
 	local UISizeX, UISizeY = unpack(redzlib.Save.UISize)
 	local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
-    Size = UDim2.fromOffset(UISizeX, UISizeY),
-    Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
-    BackgroundTransparency = 1,
-    Name = "Hub"
-}), "Main")
-
+		Size = UDim2.fromOffset(UISizeX, UISizeY),
+		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
+		BackgroundTransparency = 1,
+		Name = "Hub"
+	}), "Main")
+	local FrameStroke = Instance.new("UIStroke")
+	FrameStroke.Thickness = 6
+	FrameStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	FrameStroke.Parent = MainFrame
+	task.spawn(function()
+		while FrameStroke and FrameStroke.Parent do
+			local t = tick() * 0.5
+			local r = math.sin(t) * 0.5 + 0.5
+			local g = math.sin(t + 2) * 0.5 + 0.5
+			local b = math.sin(t + 4) * 0.5 + 0.5
+			FrameStroke.Color = Color3.new(r, g, b)
+			task.wait()
+		end
+	end)
+	return MainFrame
+end
 local WindowBackground = Create("ImageLabel", MainFrame, {
     Name = "WindowBackground",
     Size = UDim2.new(1, 0, 1, 0),
