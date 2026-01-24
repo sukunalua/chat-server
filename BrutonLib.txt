@@ -1439,6 +1439,8 @@ function brutonlib:MakeWindow(Configs)
     Name = "Hub"
 }), "Main")
 
+local RunService = game:GetService("RunService")
+
 local WindowBackground = Create("Frame", MainFrame, {
     Name = "WindowBackground",
     Size = UDim2.new(1, 0, 1, 0),
@@ -1450,18 +1452,29 @@ local WindowBackground = Create("Frame", MainFrame, {
 
 Make("Corner", WindowBackground)
 
-local BackgroundStroke = Instance.new("UIStroke")
-BackgroundStroke.Thickness = 3
-BackgroundStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-BackgroundStroke.Parent = WindowBackground
+local BorderFrame = Instance.new("Frame")
+BorderFrame.Name = "BorderFrame"
+BorderFrame.Size = UDim2.new(1, -4, 1, -4)
+BorderFrame.Position = UDim2.new(0, 2, 0, 2)
+BorderFrame.BackgroundTransparency = 1
+BorderFrame.ZIndex = 1
+BorderFrame.Parent = WindowBackground
 
-RunService.RenderStepped:Connect(function(dt)
-    local t = tick() * 0.5
-    local r = math.sin(t) * 0.5 + 0.5
-    local g = math.sin(t + 2) * 0.5 + 0.5
-    local b = math.sin(t + 4) * 0.5 + 0.5
-    BackgroundStroke.Color = Color3.new(r, g, b)
-end)
+Make("Corner", BorderFrame)
+
+local BorderStroke = Instance.new("UIStroke")
+BorderStroke.Thickness = 3
+BorderStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+BorderStroke.Color = Color3.new(1, 1, 1)
+BorderStroke.Parent = BorderFrame
+
+local BorderGradient = Instance.new("UIGradient")
+BorderGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(130, 0, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+}
+BorderGradient.Rotation = 0
+BorderGradient.Parent = BorderStroke
 
 local RotatingImage = Create("ImageLabel", WindowBackground, {
     Name = "RotatingImage",
@@ -1473,14 +1486,28 @@ local RotatingImage = Create("ImageLabel", WindowBackground, {
     ImageTransparency = 0.2,
     ScaleType = Enum.ScaleType.Crop,
     Rotation = 0,
-    ZIndex = 1
+    ZIndex = 0
 })
 
 Make("Corner", RotatingImage, UDim.new(0, 12))
 
-local rotationSpeed = 60
-RunService.RenderStepped:Connect(function(dt)
-    RotatingImage.Rotation = (RotatingImage.Rotation + rotationSpeed * dt) % 360
+local dir = 1
+local borderSpeed = 40
+local maxRotation = 160
+local imageSpeed = 60
+
+RunService.Heartbeat:Connect(function(dt)
+    BorderGradient.Rotation += borderSpeed * dt * dir
+
+    if BorderGradient.Rotation >= maxRotation then
+        BorderGradient.Rotation = maxRotation
+        dir = -1
+    elseif BorderGradient.Rotation <= 0 then
+        BorderGradient.Rotation = 0
+        dir = 1
+    end
+
+    RotatingImage.Rotation = (RotatingImage.Rotation + imageSpeed * dt) % 360
 end)
 Make("Gradient", MainFrame, {
     Rotation = 45
@@ -2075,36 +2102,34 @@ function Window:MakeTab(paste, Configs)
 		BackgroundTransparency = FirstTab and 1 or 0
 	}), "Theme")Make("Corner", Selected, UDim.new(0.5, 0))
 	local TabStroke = Instance.new("UIStroke")
-TabStroke.Thickness = 2
-TabStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-TabStroke.Color = Color3.new(1, 1, 1)
-TabStroke.Parent = TabSelect
+	TabStroke.Thickness = 2
+	TabStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	TabStroke.Parent = TabSelect
 
-local TabGradient = Instance.new("UIGradient")
-TabGradient.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 180)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-}
-TabGradient.Rotation = 0
-TabGradient.Parent = TabStroke
+	local TabGradient = Instance.new("UIGradient")
+	TabGradient.Color = ColorSequence.new{
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(130, 0, 255)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+	}
+	TabGradient.Rotation = 0
+	TabGradient.Parent = TabStroke
 
-task.spawn(function()
-	local dir = 1
-	local speed = 40
-	local maxRot = 160
-
-	while TabGradient and TabGradient.Parent do
-		TabGradient.Rotation += speed * task.wait() * dir
-
-		if TabGradient.Rotation >= maxRot then
-			TabGradient.Rotation = maxRot
-			dir = -1
-		elseif TabGradient.Rotation <= 0 then
-			TabGradient.Rotation = 0
-			dir = 1
+	task.spawn(function()
+		local dir = 1
+		local speed = 40
+		local maxRot = 160
+		while TabGradient and TabGradient.Parent do
+			TabGradient.Rotation += speed * task.wait() * dir
+			if TabGradient.Rotation >= maxRot then
+				TabGradient.Rotation = maxRot
+				dir = -1
+			elseif TabGradient.Rotation <= 0 then
+				TabGradient.Rotation = 0
+				dir = 1
+			end
 		end
-	end
-end)
+	end)
+
 	local Container = InsertTheme(Create("ScrollingFrame", {
 		Size = UDim2.new(1, 0, 1, 0),
 		Position = UDim2.new(0, 0, 1),
@@ -2112,7 +2137,7 @@ end)
 		ScrollBarThickness = 1.5,
 		BackgroundTransparency = 1,
 		ScrollBarImageTransparency = 0.2,
-		ScrollBarImageColor3 = Theme["Color Theme"],
+		ScrollBarImageColor3 = Color3.fromRGB(130, 0, 255),
 		AutomaticCanvasSize = "Y",
 		ScrollingDirection = "Y",
 		BorderSizePixel = 0,
