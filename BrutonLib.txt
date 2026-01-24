@@ -1465,20 +1465,20 @@ BackgroundStroke.Parent = WindowBackground
 
 local Gradient = Instance.new("UIGradient")
 Gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 255, 170)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(60, 220, 140)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 40, 25))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 255, 150)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(60, 220, 120)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 80, 50))
 }
 Gradient.Rotation = 0
 Gradient.Parent = BackgroundStroke
 
 local dir = 1
-local rotSpeed = 45
+local rotSpeed = 50
 local maxRot = 160
 local pulse = 0
 
 RunService.Heartbeat:Connect(function(dt)
-    Gradient.Rotation += rotSpeed * dt * dir
+    Gradient.Rotation = Gradient.Rotation + rotSpeed * dt * dir
     if Gradient.Rotation >= maxRot then
         Gradient.Rotation = maxRot
         dir = -1
@@ -1487,7 +1487,7 @@ RunService.Heartbeat:Connect(function(dt)
         dir = 1
     end
 
-    pulse += dt * 3
+    pulse = pulse + dt * 3
     BackgroundStroke.Thickness = 3 + math.sin(pulse) * 0.6
 end)
 
