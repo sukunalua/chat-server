@@ -1861,56 +1861,45 @@ end)
 		MainFrame.Visible = not MainFrame.Visible
 	end
 	function Window:AddMinimizeButton(Configs)
-	local Button = MakeDrag(Create("ImageButton", ScreenGui, {
-		Size = UDim2.fromOffset(35, 35),
-		Position = UDim2.fromScale(0.15, 0.15),
-		BackgroundTransparency = 1,
-		BackgroundColor3 = Theme["Color Hub 2"],
-		AutoButtonColor = false
-	}))
+		local Button = MakeDrag(Create("ImageButton", ScreenGui, {
+			Size = UDim2.fromOffset(35, 35),
+			Position = UDim2.fromScale(0.15, 0.15),
+			BackgroundTransparency = 1,
+			AutoButtonColor = false
+		}))
 
-	local Stroke, Corner
-	if Configs.Corner then
-		Corner = Make("Corner", Button)
-		SetProps(Corner, Configs.Corner)
-	end
-	Stroke = Instance.new("UIStroke")
-	Stroke.Thickness = 2
-	Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	Stroke.Parent = Button
+		local Stroke, Corner
 
-	task.spawn(function()
-		while Stroke and Stroke.Parent do
-			local t = tick() * 0.5
-			local r = math.sin(t) * 0.5 + 0.5
-			local g = math.sin(t + 2) * 0.5 + 0.5
-			local b = math.sin(t + 4) * 0.5 + 0.5
-			Stroke.Color = Color3.new(r, g, b)
-			task.wait()
+		if Configs.Corner then
+			Corner = Make("Corner", Button)
+			SetProps(Corner, Configs.Corner)
 		end
-	end)
 
-	if Configs.Stroke then
-		SetProps(Stroke, Configs.Stroke)
+		if Configs.Stroke then
+			Stroke = Make("Stroke", Button)
+			SetProps(Stroke, Configs.Stroke)
+		end
+
+		SetProps(Button, Configs.Button)
+
+		Button.Activated:Connect(Window.Minimize)
+
+		return {
+			Stroke = Stroke,
+			Corner = Corner,
+			Button = Button
+		}
 	end
-	SetProps(Button, Configs.Button)
-	Button.Activated:Connect(Window.Minimize)
-
-	return {
-		Stroke = Stroke,
-		Corner = Corner,
-		Button = Button
-	}
-end
-
-function Window:Set(Val1, Val2)
-	if type(Val1) == "string" and type(Val2) == "string" then
-		Title.Text = Val1
-		Title.SubTitle.Text = Val2
-	elseif type(Val1) == "string" then
-		Title.Text = Val1
+	
+	function Window:Set(Val1, Val2)
+		if type(Val1) == "string" and type(Val2) == "string" then
+			Title.Text = Val1
+			Title.SubTitle.Text = Val2
+		elseif type(Val1) == "string" then
+			Title.Text = Val1
+		end
 	end
-end
+	
 	function Window:Dialog(Configs)
 	if MainFrame:FindFirstChild("Dialog") then return end
 	if Minimized then
