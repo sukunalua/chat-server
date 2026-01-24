@@ -1998,7 +1998,6 @@ end
 			HorizontalAlignment = "Center"
 		})
 	})
-end
 	local Screen = InsertTheme(Create("Frame", MainFrame, {
 		BackgroundTransparency = 0.6,
 		Active = true,
