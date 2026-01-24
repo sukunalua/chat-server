@@ -1880,25 +1880,17 @@ end)
 		Corner = Make("Corner", Button)
 		SetProps(Corner, Configs.Corner)
 	end
+
 	Stroke = Instance.new("UIStroke")
 	Stroke.Thickness = 2
 	Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	Stroke.Color = Color3.fromRGB(255, 255, 255)
 	Stroke.Parent = Button
-
-	task.spawn(function()
-		while Stroke and Stroke.Parent do
-			local t = tick() * 0.5
-			local r = math.sin(t) * 0.5 + 0.5
-			local g = math.sin(t + 2) * 0.5 + 0.5
-			local b = math.sin(t + 4) * 0.5 + 0.5
-			Stroke.Color = Color3.new(r, g, b)
-			task.wait()
-		end
-	end)
 
 	if Configs.Stroke then
 		SetProps(Stroke, Configs.Stroke)
 	end
+
 	SetProps(Button, Configs.Button)
 	Button.Activated:Connect(Window.Minimize)
 
@@ -1955,21 +1947,40 @@ end
 			BackgroundTransparency = 1,
 			TextWrapped = true
 		}), "DarkText")
-	})Make("Gradient", Frame, {Rotation = 270})Make("Corner", Frame)
+	})
+
+	Make("Gradient", Frame, {Rotation = 270})
+	Make("Corner", Frame)
 
 	local Stroke = Instance.new("UIStroke")
 	Stroke.Thickness = 2
 	Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	Stroke.Color = Color3.new(1, 1, 1)
 	Stroke.Parent = Frame
 
+	local StrokeGradient = Instance.new("UIGradient")
+	StrokeGradient.Color = ColorSequence.new{
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 180)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+	}
+	StrokeGradient.Rotation = 0
+	StrokeGradient.Parent = Stroke
+
 	task.spawn(function()
-		while Stroke and Stroke.Parent do
-			local t = tick() * 0.5
-			local r = math.sin(t) * 0.5 + 0.5
-			local g = math.sin(t + 2) * 0.5 + 0.5
-			local b = math.sin(t + 4) * 0.5 + 0.5
-			Stroke.Color = Color3.new(r, g, b)
-			task.wait()
+		local dir = 1
+		local speed = 40
+		local maxRot = 160
+
+		while StrokeGradient and StrokeGradient.Parent do
+			StrokeGradient.Rotation += speed * task.wait() * dir
+
+			if StrokeGradient.Rotation >= maxRot then
+				StrokeGradient.Rotation = maxRot
+				dir = -1
+			elseif StrokeGradient.Rotation <= 0 then
+				StrokeGradient.Rotation = 0
+				dir = 1
+			end
 		end
 	end)
 
@@ -1987,7 +1998,7 @@ end
 			HorizontalAlignment = "Center"
 		})
 	})
-
+end
 	local Screen = InsertTheme(Create("Frame", MainFrame, {
 		BackgroundTransparency = 0.6,
 		Active = true,
