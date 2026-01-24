@@ -1463,7 +1463,7 @@ BorderFrame.Name = "BorderFrame"
 BorderFrame.Size = UDim2.new(1, -4, 1, -4)
 BorderFrame.Position = UDim2.new(0, 2, 0, 2)
 BorderFrame.BackgroundTransparency = 1
-BorderFrame.ZIndex = WindowBackground.ZIndex + 1
+BorderFrame.ZIndex = 1
 BorderFrame.Parent = WindowBackground
 
 Make("Corner", BorderFrame)
@@ -1471,6 +1471,7 @@ Make("Corner", BorderFrame)
 local BorderStroke = Instance.new("UIStroke")
 BorderStroke.Thickness = 3
 BorderStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+BorderStroke.Color = Color3.new(1, 1, 1)
 BorderStroke.Parent = BorderFrame
 
 local BorderGradient = Instance.new("UIGradient")
