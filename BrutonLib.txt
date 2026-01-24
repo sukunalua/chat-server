@@ -1458,18 +1458,27 @@ local WindowBackground = Create("Frame", MainFrame, {
 
 Make("Corner", WindowBackground)
 
-local BackgroundStroke = Instance.new("UIStroke")
-BackgroundStroke.Thickness = 3
-BackgroundStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-BackgroundStroke.Parent = WindowBackground
+local BorderFrame = Instance.new("Frame")
+BorderFrame.Size = UDim2.new(1, -6, 1, -6)
+BorderFrame.Position = UDim2.new(0, 3, 0, 3)
+BorderFrame.BackgroundTransparency = 1
+BorderFrame.ZIndex = WindowBackground.ZIndex + 1
+BorderFrame.Parent = WindowBackground
+
+Make("Corner", BorderFrame)
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Thickness = 3
+Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+Stroke.Parent = BorderFrame
 
 local Gradient = Instance.new("UIGradient")
 Gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 140, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 20))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 150, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 25))
 }
 Gradient.Rotation = 0
-Gradient.Parent = BackgroundStroke
+Gradient.Parent = Stroke
 
 local RotatingImage = Create("ImageLabel", WindowBackground, {
     Name = "RotatingImage",
@@ -1487,9 +1496,9 @@ local RotatingImage = Create("ImageLabel", WindowBackground, {
 Make("Corner", RotatingImage, UDim.new(0, 12))
 
 local rotationSpeed = 60
+local normalSpeed = 40
 local direction = 1
 local maxRotation = 160
-local normalSpeed = 40
 
 RunService.Heartbeat:Connect(function(dt)
     Gradient.Rotation += normalSpeed * dt * direction
