@@ -1447,73 +1447,68 @@ function brutonlib:MakeWindow(Configs)
 
 local RunService = game:GetService("RunService")
 
-local BorderFrame = Create("Frame", MainFrame, {
-    Name = "BorderFrame",
+local WindowBackground = Create("Frame", MainFrame, {
+    Name = "WindowBackground",
     Size = UDim2.new(1, 0, 1, 0),
     Position = UDim2.new(0, 0, 0, 0),
-    BackgroundTransparency = 0,
-    ZIndex = 0
-})
-
-Make("Corner", BorderFrame)
-
-local BorderGradient = Instance.new("UIGradient")
-BorderGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 255, 170)),
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(60, 200, 130)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 25, 15))
-}
-BorderGradient.Rotation = 0
-BorderGradient.Parent = BorderFrame
-
-local WindowBackground = Create("Frame", BorderFrame, {
-    Name = "WindowBackground",
-    Size = UDim2.new(1, -6, 1, -6),
-    Position = UDim2.new(0, 3, 0, 3),
     BackgroundColor3 = Color3.fromRGB(15, 15, 15),
     BackgroundTransparency = 0,
-    ZIndex = 2
+    ZIndex = 1
 })
 
 Make("Corner", WindowBackground)
 
-local RotatingImage = Create("ImageLabel", BorderFrame, {
+local BackgroundStroke = Instance.new("UIStroke")
+BackgroundStroke.Thickness = 3
+BackgroundStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+BackgroundStroke.Parent = WindowBackground
+
+local Gradient = Instance.new("UIGradient")
+Gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 255, 170)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(60, 220, 140)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 40, 25))
+}
+Gradient.Rotation = 0
+Gradient.Parent = BackgroundStroke
+
+local dir = 1
+local rotSpeed = 45
+local maxRot = 160
+local pulse = 0
+
+RunService.Heartbeat:Connect(function(dt)
+    Gradient.Rotation += rotSpeed * dt * dir
+    if Gradient.Rotation >= maxRot then
+        Gradient.Rotation = maxRot
+        dir = -1
+    elseif Gradient.Rotation <= 0 then
+        Gradient.Rotation = 0
+        dir = 1
+    end
+
+    pulse += dt * 3
+    BackgroundStroke.Thickness = 3 + math.sin(pulse) * 0.6
+end)
+
+local RotatingImage = Create("ImageLabel", WindowBackground, {
     Name = "RotatingImage",
-    Size = UDim2.new(0, 260, 0, 260),
+    Size = UDim2.new(0, 300, 0, 300),
     Position = UDim2.new(0.5, 0, 0.5, 0),
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
     Image = "rbxassetid://97255732156702",
-    ImageTransparency = 0.35,
+    ImageTransparency = 0.2,
     ScaleType = Enum.ScaleType.Crop,
     Rotation = 0,
-    ZIndex = 1
+    ZIndex = 0
 })
 
 Make("Corner", RotatingImage, UDim.new(0, 12))
 
-local dir = 1
-local borderSpeed = 50
-local maxRot = 160
-local imageSpeed = 60
-local pulseTime = 0
-
-RunService.Heartbeat:Connect(function(dt)
-    BorderGradient.Rotation += borderSpeed * dt * dir
-
-    if BorderGradient.Rotation >= maxRot then
-        BorderGradient.Rotation = maxRot
-        dir = -1
-    elseif BorderGradient.Rotation <= 0 then
-        BorderGradient.Rotation = 0
-        dir = 1
-    end
-
-    pulseTime += dt * 2.8
-    local pulse = math.sin(pulseTime) * 0.08
-    BorderGradient.Offset = Vector2.new(0, pulse)
-
-    RotatingImage.Rotation = (RotatingImage.Rotation + imageSpeed * dt) % 360
+local rotationSpeed = 60
+RunService.RenderStepped:Connect(function(dt)
+    RotatingImage.Rotation = (RotatingImage.Rotation + rotationSpeed * dt) % 360
 end)
 Make("Gradient", MainFrame, {
     Rotation = 45
