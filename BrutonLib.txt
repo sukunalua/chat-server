@@ -1447,38 +1447,34 @@ function brutonlib:MakeWindow(Configs)
 
 local RunService = game:GetService("RunService")
 
-local WindowBackground = Create("Frame", MainFrame, {
-    Name = "WindowBackground",
+local BorderFrame = Create("Frame", MainFrame, {
+    Name = "BorderFrame",
     Size = UDim2.new(1, 0, 1, 0),
     Position = UDim2.new(0, 0, 0, 0),
-    BackgroundColor3 = Color3.fromRGB(15, 15, 15),
     BackgroundTransparency = 0,
     ZIndex = 0
 })
 
-Make("Corner", WindowBackground)
-
-local BorderFrame = Instance.new("Frame")
-BorderFrame.Size = UDim2.new(1, -6, 1, -6)
-BorderFrame.Position = UDim2.new(0, 3, 0, 3)
-BorderFrame.BackgroundTransparency = 1
-BorderFrame.ZIndex = WindowBackground.ZIndex + 1
-BorderFrame.Parent = WindowBackground
-
 Make("Corner", BorderFrame)
 
-local Stroke = Instance.new("UIStroke")
-Stroke.Thickness = 3
-Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-Stroke.Parent = BorderFrame
-
-local Gradient = Instance.new("UIGradient")
-Gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 150, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 25))
+local BorderGradient = Instance.new("UIGradient")
+BorderGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 160, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 30))
 }
-Gradient.Rotation = 0
-Gradient.Parent = Stroke
+BorderGradient.Rotation = 0
+BorderGradient.Parent = BorderFrame
+
+local WindowBackground = Create("Frame", BorderFrame, {
+    Name = "WindowBackground",
+    Size = UDim2.new(1, -6, 1, -6),
+    Position = UDim2.new(0, 3, 0, 3),
+    BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+    BackgroundTransparency = 0,
+    ZIndex = 1
+})
+
+Make("Corner", WindowBackground)
 
 local RotatingImage = Create("ImageLabel", WindowBackground, {
     Name = "RotatingImage",
@@ -1490,28 +1486,28 @@ local RotatingImage = Create("ImageLabel", WindowBackground, {
     ImageTransparency = 0.2,
     ScaleType = Enum.ScaleType.Crop,
     Rotation = 0,
-    ZIndex = 1
+    ZIndex = 2
 })
 
 Make("Corner", RotatingImage, UDim.new(0, 12))
 
-local rotationSpeed = 60
-local normalSpeed = 40
 local direction = 1
+local speed = 40
 local maxRotation = 160
+local imageSpeed = 60
 
 RunService.Heartbeat:Connect(function(dt)
-    Gradient.Rotation += normalSpeed * dt * direction
+    BorderGradient.Rotation += speed * dt * direction
 
-    if Gradient.Rotation >= maxRotation then
-        Gradient.Rotation = maxRotation
+    if BorderGradient.Rotation >= maxRotation then
+        BorderGradient.Rotation = maxRotation
         direction = -1
-    elseif Gradient.Rotation <= 0 then
-        Gradient.Rotation = 0
+    elseif BorderGradient.Rotation <= 0 then
+        BorderGradient.Rotation = 0
         direction = 1
     end
 
-    RotatingImage.Rotation = (RotatingImage.Rotation + rotationSpeed * dt) % 360
+    RotatingImage.Rotation = (RotatingImage.Rotation + imageSpeed * dt) % 360
 end)
 Make("Gradient", MainFrame, {
     Rotation = 45
