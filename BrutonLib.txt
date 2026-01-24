@@ -1494,7 +1494,7 @@ Make("Corner", RotatingImage, UDim.new(0, 12))
 local dir = 1
 local borderSpeed = 40
 local maxRotation = 160
-local imageSpeed = 60
+local imageSpeed = 140
 
 RunService.Heartbeat:Connect(function(dt)
     BorderGradient.Rotation += borderSpeed * dt * dir
