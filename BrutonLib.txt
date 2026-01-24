@@ -1462,6 +1462,24 @@ BorderGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 160, 255)),
     ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 30))
 }
+local RunService = game:GetService("RunService")
+
+local BorderFrame = Create("Frame", MainFrame, {
+    Name = "BorderFrame",
+    Size = UDim2.new(1, 0, 1, 0),
+    Position = UDim2.new(0, 0, 0, 0),
+    BackgroundTransparency = 0,
+    ZIndex = 0
+})
+
+Make("Corner", BorderFrame)
+
+local BorderGradient = Instance.new("UIGradient")
+BorderGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 170, 255)),
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 120, 200)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 15, 30))
+}
 BorderGradient.Rotation = 0
 BorderGradient.Parent = BorderFrame
 
@@ -1478,12 +1496,12 @@ Make("Corner", WindowBackground)
 
 local RotatingImage = Create("ImageLabel", WindowBackground, {
     Name = "RotatingImage",
-    Size = UDim2.new(0, 300, 0, 300),
+    Size = UDim2.new(0, 260, 0, 260),
     Position = UDim2.new(0.5, 0, 0.5, 0),
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundTransparency = 1,
     Image = "rbxassetid://97255732156702",
-    ImageTransparency = 0.2,
+    ImageTransparency = 0.25,
     ScaleType = Enum.ScaleType.Crop,
     Rotation = 0,
     ZIndex = 2
@@ -1491,21 +1509,26 @@ local RotatingImage = Create("ImageLabel", WindowBackground, {
 
 Make("Corner", RotatingImage, UDim.new(0, 12))
 
-local direction = 1
-local speed = 40
-local maxRotation = 160
+local dir = 1
+local borderSpeed = 55
+local maxRot = 160
 local imageSpeed = 60
+local pulseTime = 0
 
 RunService.Heartbeat:Connect(function(dt)
-    BorderGradient.Rotation += speed * dt * direction
+    BorderGradient.Rotation += borderSpeed * dt * dir
 
-    if BorderGradient.Rotation >= maxRotation then
-        BorderGradient.Rotation = maxRotation
-        direction = -1
+    if BorderGradient.Rotation >= maxRot then
+        BorderGradient.Rotation = maxRot
+        dir = -1
     elseif BorderGradient.Rotation <= 0 then
         BorderGradient.Rotation = 0
-        direction = 1
+        dir = 1
     end
+
+    pulseTime += dt * 3
+    local pulse = (math.sin(pulseTime) * 0.5 + 0.5)
+    BorderGradient.Offset = Vector2.new(0, pulse * 0.15)
 
     RotatingImage.Rotation = (RotatingImage.Rotation + imageSpeed * dt) % 360
 end)
