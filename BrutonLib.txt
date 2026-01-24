@@ -1476,7 +1476,7 @@ BorderStroke.Parent = BorderFrame
 
 local BorderGradient = Instance.new("UIGradient")
 BorderGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 190, 255)),
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(130, 0, 255)),  
     ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
 }
 BorderGradient.Rotation = 0
@@ -1884,7 +1884,7 @@ end)
 	Stroke = Instance.new("UIStroke")
 	Stroke.Thickness = 2
 	Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	Stroke.Color = Color3.fromRGB(255, 255, 255)
+	Stroke.Color = Color3.fromRGB(130, 0, 255), 
 	Stroke.Parent = Button
 
 	if Configs.Stroke then
@@ -1960,7 +1960,7 @@ end
 
 	local StrokeGradient = Instance.new("UIGradient")
 	StrokeGradient.Color = ColorSequence.new{
-		ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 180)),
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(130, 0, 255)),  
 		ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
 	}
 	StrokeGradient.Rotation = 0
@@ -2108,7 +2108,7 @@ TabStroke.Parent = TabSelect
 
 local TabGradient = Instance.new("UIGradient")
 TabGradient.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 180)),
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(130, 0, 255)),  
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
 }
 TabGradient.Rotation = 0
